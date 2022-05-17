@@ -4,7 +4,7 @@
 import os
 import cProfile
 
-directory = "check_brackets tests"
+directory = "check_brackets_tests"
 
 
 def find_mismatch(text):
