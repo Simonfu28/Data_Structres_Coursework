@@ -1,20 +1,31 @@
-#python3
+# python3
+# passes 5/5 test cases, O(1) time
+
 import sys
+
 
 class StackWithMax():
     def __init__(self):
         self.__stack = []
+        self.max = ""
 
     def Push(self, a):
+        if self.max:
+            if self.max < a:
+                self.max = a
+        else:
+            self.max = a
+        self.__stack.append(self.max)
         self.__stack.append(a)
 
     def Pop(self):
         assert(len(self.__stack))
-        self.__stack.pop()
+        self.__stack.pop(-1)
+        self.__stack.pop(-1)
+        self.max = self.__stack[-2]
 
     def Max(self):
-        assert(len(self.__stack))
-        return max(self.__stack)
+        return self.__stack[-2]
 
 
 if __name__ == '__main__':
@@ -31,4 +42,4 @@ if __name__ == '__main__':
         elif query[0] == "max":
             print(stack.Max())
         else:
-            assert(0)
+            assert 0
