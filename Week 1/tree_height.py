@@ -21,18 +21,18 @@ class TreeHeight:
                         n = node
                         temp_queue = []
                         temp = 0
-                        if self.parent[node] == -1:
+                        if self.parent[node] == -1:                     ## Checks if current node is the root
                                 height[node] = 1
-                        elif height[node] != 0:
+                        elif height[node] != 0:                         ## Checks if the current node has been visited before
                                 continue
-                        else:
-                                while n != -1:
+                        else:                           
+                                while n != -1:                          ## Travels up the tree to the root, saving the path into a temp queue
                                         temp_queue.append(n)
                                         n = self.parent[n]
                                         if height[n] != 0:
                                                 temp = height[n]
                                                 break
-                                for c, i in enumerate(temp_queue):
+                                for c, i in enumerate(temp_queue):      ## Saves the heighs of the nodes that the traversal has visited
                                         height[i] = len(temp_queue) - c + temp
                 
                 return max(height)
@@ -40,10 +40,10 @@ class TreeHeight:
 
 def main():
         tree = TreeHeight()
-        for i in range(10, 24):
+        for i in range(10, 24): ## Loads the Test Cases
                 path = "/home/simon/Data_Structres_Coursework/Week 1/tree_height_tests/" + str(i)
                 tree.read(path)
                 t = '/home/simon/Data_Structres_Coursework/Week 1/tree_height_tests/' + str(i) + ".a"
-                f = open(t, 'r').readline()
-                print(tree.compute_height(), f)
+                f = open(t, 'r').readline()             ## Prints the correct answer 
+                print(tree.compute_height(), f)         ## Prints the answer outputted from the solution
 threading.Thread(target=main).start()
