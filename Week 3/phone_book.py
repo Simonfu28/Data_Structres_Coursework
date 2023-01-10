@@ -1,47 +1,48 @@
 # python3
+# solves 2/2 test cases in 0.1 ms
 
-class Query:
-    def __init__(self, query):
-        self.type = query[0]
-        self.number = int(query[1])
-        if self.type == 'add':
-            self.name = query[2]
+import time
 
-def read_queries():
-    n = int(input())
-    return [Query(input().split()) for i in range(n)]
+phone_number_dict = {}
+name_dict = {}
 
-def write_responses(result):
-    print('\n'.join(result))
+def addContact(phone_number, name):
+    if name not in name_dict:
+        name_dict[name] = phone_number
+        phone_number_dict[phone_number] = name
+    else:
+        drop_key = name_dict[name]
+        name_dict[name] = [phone_number]
+        phone_number.pop(drop_key)
+        phone_number[phone_number] = name
 
-def process_queries(queries):
-    result = []
-    # Keep list of all existing (i.e. not deleted yet) contacts.
-    contacts = []
-    for cur_query in queries:
-        if cur_query.type == 'add':
-            # if we already have contact with such number,
-            # we should rewrite contact's name
-            for contact in contacts:
-                if contact.number == cur_query.number:
-                    contact.name = cur_query.name
-                    break
-            else: # otherwise, just add it
-                contacts.append(cur_query)
-        elif cur_query.type == 'del':
-            for j in range(len(contacts)):
-                if contacts[j].number == cur_query.number:
-                    contacts.pop(j)
-                    break
+
+def delContact(phone_number):
+    if phone_number in phone_number_dict:
+        drop_key = phone_number_dict[phone_number]
+        phone_number_dict.pop(phone_number)
+        name_dict.pop(drop_key)
+
+def findContact(phone_number):
+    if phone_number in phone_number_dict:
+        return phone_number_dict[phone_number]
+    else:
+        return "not found"
+
+
+if __name__ == "__main__":
+    with open("phone_book_input.txt") as f:
+        lines = f.read().splitlines()
+    start = time.time()
+    
+    for txt in lines:
+        x = txt.split()
+        if x[0] == "add":
+            addContact(x[1], x[2])
+        elif x[0] == "del":
+            delContact(x[1])
         else:
-            response = 'not found'
-            for contact in contacts:
-                if contact.number == cur_query.number:
-                    response = contact.name
-                    break
-            result.append(response)
-    return result
+            print(findContact(x[1]))
 
-if __name__ == '__main__':
-    write_responses(process_queries(read_queries()))
-
+    end = time.time()
+    print("The time of execution of above program is :", (end-start) * 10**3, "ms")
