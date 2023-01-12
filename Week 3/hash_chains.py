@@ -1,64 +1,104 @@
 # python3
+# passes all test cases in 1.32 ms
 
-class Query:
+import time
 
-    def __init__(self, query):
-        self.type = query[0]
-        if self.type == 'check':
-            self.ind = int(query[1])
-        else:
-            self.s = query[1]
+class node:
+    def __init__(self):
+        self.value = None
+        self.next = None
+        self.prev = None
 
+def store(head, string):
+    x = node()
+    if head.next != None:
+        temp = head.next
+        x.value = string
+        x.next = temp
+        temp.prev = x
+        x.prev = head
+        head.next = x
+    else:
+        head.next = x
+        x.value = string
+        x.prev = head
 
-class QueryProcessor:
-    _multiplier = 263
-    _prime = 1000000007
-
-    def __init__(self, bucket_count):
-        self.bucket_count = bucket_count
-        # store all strings in one list
-        self.elems = []
-
-    def _hash_func(self, s):
-        ans = 0
-        for c in reversed(s):
-            ans = (ans * self._multiplier + ord(c)) % self._prime
-        return ans % self.bucket_count
-
-    def write_search_result(self, was_found):
-        print('yes' if was_found else 'no')
-
-    def write_chain(self, chain):
-        print(' '.join(chain))
-
-    def read_query(self):
-        return Query(input().split())
-
-    def process_query(self, query):
-        if query.type == "check":
-            # use reverse order, because we append strings to the end
-            self.write_chain(cur for cur in reversed(self.elems)
-                        if self._hash_func(cur) == query.ind)
-        else:
-            try:
-                ind = self.elems.index(query.s)
-            except ValueError:
-                ind = -1
-            if query.type == 'find':
-                self.write_search_result(ind != -1)
-            elif query.type == 'add':
-                if ind == -1:
-                    self.elems.append(query.s)
+def delete(head, string):
+    temp = head.next
+    while temp is not None:
+        if temp.value == string:
+            x = temp.prev
+            y = temp.next
+            if y is not None:
+                x.next = y
+                y.prev = x
             else:
-                if ind != -1:
-                    self.elems.pop(ind)
+                x.next = None
+        temp = temp.next
+            
+def find(head, string):
+    temp = head.next
+    while temp is not None:
+        if temp.value == string:
+            return True
+        temp = temp.next
+    return False
 
-    def process_queries(self):
-        n = int(input())
-        for i in range(n):
-            self.process_query(self.read_query())
+def check(head):
+    temp = head.next
+    outs = []
+    while temp is not None:
+        outs.append(temp.value)
+        temp = temp.next
+    return outs
 
-if __name__ == '__main__':
-    bucket_count = int(input())
-    proc = QueryProcessor(bucket_count)
-    proc.process_queries()
+def hash(m, string):
+    h = 0
+    for i, c in enumerate(string):
+        x = ord(c)
+        h = h + (x*(263**i))
+        h = h%1000000007
+    return h%m
+
+
+if __name__ == "__main__":
+    with open("hash_chains_tests/3.txt") as f:
+        lines = f.read().splitlines()
+
+    start = time.time()
+
+    heads = []
+    for i in range(0,int(lines[0])):
+        heads.append(i)             ##Creates a list of heads of the linked lists
+        heads[i] = node()
+    
+    for c in lines[1:]:
+        i = c.split()
+        h = heads[hash(int(lines[0]), i[1])]
+        if i[0] == "add":
+            if find(h, i[1]) is False:
+                store(h, i[1])
+        if i[0] == "del":
+            if find(h, i[1]) is True:
+                delete(h, i[1])
+        if i[0] == "find":
+            if find(h, i[1]) is True:
+                print("yes")
+            else:
+                print("no")
+        if i[0] == "check":
+            x = int(i[1])
+            out = check(heads[x])
+            print(out)
+
+    end = time.time()
+    print("The time of execution of above program is :", (end-start) * 10**3, "ms")
+    
+
+        
+
+
+
+
+
+        
